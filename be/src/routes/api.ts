@@ -1,5 +1,6 @@
-import { filterProducts, getAllProducts, getDetailProduct, getProductsPaginate,getCategory, postHandleCartToCheckOut } from 'controllers/client/product-controller'
+import { filterProducts, getAllProducts, getDetailProduct, getProductsPaginate, getCategory, getCart, postAddProductToCart } from 'controllers/client/product-controller'
 import express, { Express } from 'express'
+import { verifyToken } from 'src/middleware/verifyToken'
 const router = express.Router()
 
 const api = (app: Express) => {
@@ -11,11 +12,15 @@ const api = (app: Express) => {
     router.get("/products/filter", filterProducts)
     router.get("/category", getCategory)
 
-    //checkout
-    router.post("/handle-cart-to-checkout", postHandleCartToCheckOut); //cập nhật giỏ hàng trước khi checkout.
+
+    //cart
+    router.get("/cart", verifyToken, getCart)
+    router.post("/add-product/:id", verifyToken, postAddProductToCart)
+
+
 
     app.use("/api", router)
-        
+
 
 }
 

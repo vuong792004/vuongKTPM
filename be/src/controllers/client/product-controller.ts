@@ -1,7 +1,7 @@
 
 import { prisma } from 'config/client'
 import { Response, Request } from 'express'
-import { countTotalProductClientPages, fetchAllProducts, fetchProductsPaginated, getProductById,getAllCategory, updateCartDetailBeforeCheckout } from 'services/client/product-service';
+import { countTotalProductClientPages, fetchAllProducts, fetchProductsPaginated, getProductById, getAllCategory, getProductInCart, addProductToCart } from 'services/client/product-service';
 
 const getAllProducts = async (req: Request, res: Response) => {
     try {
@@ -151,32 +151,65 @@ const filterProducts = async (req: Request, res: Response) => {
         res.status(500).json({ error: "Error filtering products" });
     }
 };
-//------------------------------------CHECKOUT----------------------------------------------
-const postHandleCartToCheckOut = async (req: Request, res: Response) => {
 
-    //đặt hàng truyền idCart , quantity , variantID
-    const { cart_id, cartDetails } = req.body as {
-        cart_id: string,
-        cartDetails: { item_id: string, quantity: string }[]
-    }
+
+// -------------------- GET CART -------------------------------
+
+const getCart = async (req: Request, res: Response) => {
+    // trả về tất cả sản phẩm trong giỏ hàng , totalPrice,
+    // trả về luôn cardId cho các bước 
+    const user = req.user;
     try {
-
-        await updateCartDetailBeforeCheckout(cart_id, cartDetails);
+        const cartDetails = await getProductInCart(+user.id);
+        const totalPrice = cartDetails?.map(item => (item.quantity * +item.price))
+            ?.reduce((a, b) => a + b, 0); // tính tổng
+        const cartId = cartDetails.length ? cartDetails[0].cart_id : 0
         res.status(200).json({
             success: true,
-            message: "Cập nhật thông tin giỏ hàng thành công, chuẩn bị checkout",
+            cart_detail: cartDetails,
+            totalPrice,
+            cartId
         });
-
     }
     catch (error: any) {
         res.status(500).json({
             success: false,
-            message: error.message,
+            message: "Có lỗi xảy ra khi lấy thông tin giỏ hàng",
+            error,
         });
 
     }
 
 }
+
+// -------------------- ADD PRODUCT TO CART -------------------------------
+
+const postAddProductToCart = async (req: Request, res: Response) => {
+    const id_variant = req.params.id;
+    const user = req.user;
+    try {
+
+        await addProductToCart(1, +id_variant, user);
+
+
+        res.status(201).json({
+            success: true,
+            message: "Thêm sản phẩm vào giỏ hàng thành công",
+        });
+    }
+    catch (error: any) {
+        res.status(500).json({
+            success: false,
+            message: "Có lỗi xảy ra khi thêm sản phẩm",
+            error,
+        });
+
+    }
+
+}
+
+
 export {
-    getAllProducts, getProductsPaginate, getDetailProduct, filterProducts,getCategory, postHandleCartToCheckOut
+    getAllProducts, getProductsPaginate, getDetailProduct, filterProducts, getCategory, getCart, postAddProductToCart
+
 }
