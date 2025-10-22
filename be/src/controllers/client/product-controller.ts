@@ -1,7 +1,7 @@
 
 import { prisma } from 'config/client'
 import { Response, Request } from 'express'
-import { countTotalProductClientPages, fetchAllProducts, fetchProductsPaginated, getProductById,getAllCategory } from 'services/client/product-service';
+import { countTotalProductClientPages, fetchAllProducts, fetchProductsPaginated, getProductById, getAllCategory, getProductInCart } from 'services/client/product-service';
 
 const getAllProducts = async (req: Request, res: Response) => {
     try {
@@ -152,7 +152,37 @@ const filterProducts = async (req: Request, res: Response) => {
     }
 };
 
+
+// -------------------- GET CART -------------------------------
+
+const getCart = async (req: Request, res: Response) => {
+    // trả về tất cả sản phẩm trong giỏ hàng , totalPrice,
+    // trả về luôn cardId cho các bước 
+    const user = req.user;
+    try {
+        const cartDetails = await getProductInCart(+user.id);
+        const totalPrice = cartDetails?.map(item => (item.quantity * +item.price))
+            ?.reduce((a, b) => a + b, 0); // tính tổng
+        const cartId = cartDetails.length ? cartDetails[0].cart_id : 0
+        res.status(200).json({
+            success: true,
+            cart_detail: cartDetails,
+            totalPrice,
+            cartId
+        });
+    }
+    catch (error: any) {
+        res.status(500).json({
+            success: false,
+            message: "Có lỗi xảy ra khi lấy thông tin giỏ hàng",
+            error,
+        });
+
+    }
+
+}
+
 export {
-    getAllProducts, getProductsPaginate, getDetailProduct, filterProducts,getCategory
+    getAllProducts, getProductsPaginate, getDetailProduct, filterProducts, getCategory, getCart
 
 }
