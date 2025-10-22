@@ -1,7 +1,7 @@
 
 import { prisma } from 'config/client'
 import { Response, Request } from 'express'
-import { countTotalProductClientPages, fetchAllProducts, fetchProductsPaginated, getProductById, getAllCategory, getProductInCart, addProductToCart } from 'services/client/product-service';
+import { countTotalProductClientPages, fetchAllProducts, fetchProductsPaginated, getProductById, getAllCategory, getProductInCart, addProductToCart, handleDeleteProductInCart } from 'services/client/product-service';
 
 const getAllProducts = async (req: Request, res: Response) => {
     try {
@@ -208,8 +208,30 @@ const postAddProductToCart = async (req: Request, res: Response) => {
 
 }
 
+const deleteProductInCart = async (req: Request, res: Response) => {
+    // trả về tất cả sản phẩm trong giỏ hàng , totalPrice,
+    // trả về luôn cardId cho các bước 
+    const user = req.user;
+    const cartItemId = req.params.id
+    try {
+        await handleDeleteProductInCart(cartItemId, user.sumCart, user.id)
+        res.status(200).json({
+            success: true,
+            message: "Xóa sản phẩm thành công",
+        });
+
+    }
+    catch (error: any) {
+        res.status(500).json({
+            success: false,
+            message: error.message,
+        });
+
+    }
+
+}
 
 export {
     getAllProducts, getProductsPaginate, getDetailProduct, filterProducts, getCategory, getCart, postAddProductToCart
-
+    , deleteProductInCart
 }

@@ -167,7 +167,45 @@ const addProductToCart = async (quantity: number, id_variant: number, user: Expr
     }
 }
 
+const handleDeleteProductInCart = async (cartItemId: string, sumCart: number, userId: number) => {
+
+    //lấy quantity để trừ đi 
+    const currentCartItem = await prisma.cartItem.findUnique({ where: { item_id: +cartItemId } })
+    if (!currentCartItem) throw new Error("Không tìm thấy sản phẩm bạn muốn xóa trong giỏ hàng");
+
+    const quantity = currentCartItem.quantity
+
+    // lấy cart hiện tại theo userId
+    const cart = await prisma.cart.findUnique({
+        where: { user_id: userId }
+    });
+    if (!cart) throw new Error("Giỏ hàng không tồn tại");
+
+
+    // xóa cart item
+    await prisma.cartItem.delete({
+        where: { item_id: +cartItemId }
+    })
+
+    //xóa cart 
+    if (sumCart === 1) {
+        //delete cart
+        await prisma.cart.delete({ where: { id: cart.id } })
+    } else {
+        //update sum cart
+        await prisma.cart.update({
+            where: { user_id: userId },
+            data: {
+                sum: {
+                    decrement: quantity
+                }
+            }
+        })
+    }
+
+};
+
 export {
     countTotalProductClientPages, fetchProductsPaginated, fetchAllProducts, getProductById, getAllCategory
-    , getProductInCart, addProductToCart
+    , getProductInCart, addProductToCart, handleDeleteProductInCart
 }
