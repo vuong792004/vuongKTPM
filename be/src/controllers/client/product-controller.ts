@@ -1,7 +1,7 @@
 
 import { prisma } from 'config/client'
 import { Response, Request } from 'express'
-import { countTotalProductClientPages, fetchAllProducts, fetchProductsPaginated, getProductById,getAllCategory } from 'services/client/product-service';
+import { countTotalProductClientPages, fetchAllProducts, fetchProductsPaginated, getProductById,getAllCategory, updateCartDetailBeforeCheckout } from 'services/client/product-service';
 
 const getAllProducts = async (req: Request, res: Response) => {
     try {
@@ -151,8 +151,32 @@ const filterProducts = async (req: Request, res: Response) => {
         res.status(500).json({ error: "Error filtering products" });
     }
 };
+//------------------------------------CHECKOUT----------------------------------------------
+const postHandleCartToCheckOut = async (req: Request, res: Response) => {
 
+    //đặt hàng truyền idCart , quantity , variantID
+    const { cart_id, cartDetails } = req.body as {
+        cart_id: string,
+        cartDetails: { item_id: string, quantity: string }[]
+    }
+    try {
+
+        await updateCartDetailBeforeCheckout(cart_id, cartDetails);
+        res.status(200).json({
+            success: true,
+            message: "Cập nhật thông tin giỏ hàng thành công, chuẩn bị checkout",
+        });
+
+    }
+    catch (error: any) {
+        res.status(500).json({
+            success: false,
+            message: error.message,
+        });
+
+    }
+
+}
 export {
-    getAllProducts, getProductsPaginate, getDetailProduct, filterProducts,getCategory
-
+    getAllProducts, getProductsPaginate, getDetailProduct, filterProducts,getCategory, postHandleCartToCheckOut
 }
