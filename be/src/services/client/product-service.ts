@@ -74,7 +74,14 @@ const getProductById = async (id: string) => {
     })
 };
 
+
+  //category
+const getAllCategory = async () => {
+    return await prisma.category.findMany()
+};
+
+
 export {
-    countTotalProductClientPages,fetchProductsPaginated,fetchAllProducts, getProductById
+    countTotalProductClientPages,fetchProductsPaginated,fetchAllProducts, getProductById,getAllCategory
 
 }
