@@ -256,8 +256,31 @@ const postHandleCartToCheckOut = async (req: Request, res: Response) => {
 
     }
 }
+const getCheckOutPage = async (req: Request, res: Response) => {
+    try {
 
+        const user = req.user;
+        const cartDetails = await getProductInCart(+user.id);
+
+        const totalPrice = cartDetails?.reduce(
+            (sum, item) => sum + (+item.price * +item.quantity),
+            0
+        ) ?? 0;
+
+        return res.status(200).json({
+            success: true,
+            message: "Lấy thông tin giỏ hàng thành công",
+            cartDetails,
+            totalPrice
+        });
+    } catch (error: any) {
+        return res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+};
 export {
     getAllProducts, getProductsPaginate, getDetailProduct, filterProducts, getCategory, getCart, postAddProductToCart
-    , deleteProductInCart, postHandleCartToCheckOut
+    , deleteProductInCart, postHandleCartToCheckOut, getCheckOutPage
 }
