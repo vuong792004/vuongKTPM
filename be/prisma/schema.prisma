@@ -1,0 +1,205 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Product {
+  id          Int      @id @default(autoincrement())
+  name        String // Tên sản phẩm: iPhone 15 Pro Max, MacBook Air M3
+  description String?  @db.LongText
+  basePrice   Decimal // Giá cơ bản
+  image       String?
+  category_id Int
+  category    Category @relation(fields: [category_id], references: [category_id])
+
+  // sub-category ví dụ "iphone_pro", "macbook_air"
+  subCategory String? @db.VarChar(100)
+
+  status      Boolean  @default(true)
+
+
+  variants  ProductVariant[]
+  reviews   Review[]
+  wishlists Wishlist[]
+
+  @@map("products")
+}
+
+model ProductVariant {
+  id         Int     @id @default(autoincrement())
+  product_id Int
+  color      String // Ví dụ: "Blue Titanium", "Starlight", "Midnight"
+  storage    String? // Dung lượng: "128GB", "256GB", "1TB" (nếu có)
+  price      Decimal
+  status      Boolean  @default(true)
+
+  product      Product        @relation(fields: [product_id], references: [id], onDelete: Cascade)
+  CartItem     CartItem[]
+  OrderItem    OrderItem[]
+  Inventory    Inventory[]
+  InventoryLog InventoryLog[]
+
+  @@map("product_variants")
+}
+
+model Category {
+  category_id Int       @id @default(autoincrement())
+  name        String // iPhone, iPad, MacBook, AirPods
+  products    Product[]
+
+  @@map("categories")
+}
+
+model User {
+  id       Int        @id @default(autoincrement())
+  name     String?    @db.VarChar(255)
+  password String
+  email    String     @unique @db.VarChar(255)
+  phone    String?    @db.VarChar(255)
+  address  String?
+  role     Role       @default(customer)
+  avatar   String?    @db.VarChar(255)
+  status   UserStatus @default(ACTIVE)
+
+  created_at DateTime @default(now())
+
+  carts     Cart[]
+  reviews   Review[]
+  orders    Order[]
+  wishlists Wishlist[]
+
+  @@map("users")
+}
+
+enum Role {
+  admin
+  customer
+}
+
+enum UserStatus {
+  ACTIVE
+  DISABLED
+}
+
+model Cart {
+  id         Int      @id @default(autoincrement())
+  user_id    Int      @unique
+  sum        Int
+  created_at DateTime @default(now())
+
+  user  User       @relation(fields: [user_id], references: [id])
+  items CartItem[]
+
+  @@map("cart")
+}
+
+model CartItem {
+  item_id    Int            @id @default(autoincrement())
+  cart_id    Int
+  variant_id Int
+  quantity   Int
+  price      Decimal
+  cart       Cart           @relation(fields: [cart_id], references: [id])
+  variant    ProductVariant @relation(fields: [variant_id], references: [id])
+
+  @@map("cart_items")
+}
+
+model Order {
+  order_id        Int         @id @default(autoincrement())
+  user_id         Int
+  total_amount    Decimal
+  receiverAddress String      @db.VarChar(255)
+  receiverName    String      @db.VarChar(255)
+  receiverPhone   String      @db.VarChar(255)
+  status          OrderStatus @default(PENDING)
+  paymentMethod   String //COD, BANKING...
+  paymentStatus   String //PAYMENT_UNPAID, PAYMENT_SUCCEED, PAYMENT_FAILED
+  created_at      DateTime    @default(now())
+
+  user  User        @relation(fields: [user_id], references: [id])
+  items OrderItem[]
+
+  @@map("orders")
+}
+
+enum OrderStatus {
+  PENDING
+  CANCELED
+  COMPLETE
+}
+
+model OrderItem {
+  order_item_id Int     @id @default(autoincrement())
+  quantity      Int
+  price         Decimal
+
+  order    Order @relation(fields: [order_id], references: [order_id])
+  order_id Int
+
+  variant    ProductVariant @relation(fields: [variant_id], references: [id])
+  variant_id Int
+
+  @@map("order_items")
+}
+
+model Review {
+  review_id  Int      @id @default(autoincrement())
+  user_id    Int
+  product_id Int
+  rating     Int
+  comment    String?
+  created_at DateTime @default(now())
+
+  user    User    @relation(fields: [user_id], references: [id])
+  product Product @relation(fields: [product_id], references: [id])
+
+  @@map("reviews")
+}
+
+model Inventory {
+  id                 Int @id @default(autoincrement())
+  product_variant_id Int
+  stock              Int
+  sold               Int @default(0)
+
+  variant ProductVariant @relation(fields: [product_variant_id], references: [id], onDelete: Cascade)
+
+  @@map("inventory")
+}
+
+model InventoryLog {
+  id                 Int      @id @default(autoincrement())
+  product_variant_id Int
+  action_type        String // ví dụ: IMPORT, EXPORT, ADJUST
+  quantity           Int
+  note               String?
+  created_by         Int // user thao tác
+  created_at         DateTime @default(now())
+
+  variant ProductVariant @relation(fields: [product_variant_id], references: [id], onDelete: Cascade)
+
+  @@map("inventory_log")
+}
+
+model Wishlist {
+  id         Int      @id @default(autoincrement())
+  user_id    Int
+  product_id Int
+  created_at DateTime @default(now())
+
+  user    User    @relation(fields: [user_id], references: [id])
+  product Product @relation(fields: [product_id], references: [id])
+
+  @@map("wishlists")
+}
