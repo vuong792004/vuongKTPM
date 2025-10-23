@@ -181,6 +181,28 @@ const handleUpdateProduct = async (
         },
     });
 };
+
+
+//variant
+const handleHideVariant = async (id: string) => {
+    const variant = await prisma.productVariant.findUnique({
+        where: { id: +id },
+        include: { Inventory: true },
+    });
+
+    if (!variant) throw new Error("Variant not found");
+
+    const newStatus = !variant.status;
+
+    return await prisma.productVariant.update({
+        where: { id: +id },
+        data: {
+            status: newStatus,
+        },
+    });
+};
+
+
 export {
-    handleCreateProduct, handleUpdateProduct, handleHideProduct
+    handleCreateProduct, handleUpdateProduct, handleHideProduct,handleHideVariant
 }

@@ -1,7 +1,7 @@
 
 import { prisma } from 'config/client'
 import { Response, Request } from 'express'
-import { handleCreateProduct, handleHideProduct, handleUpdateProduct } from 'services/admin/product-service'
+import { handleCreateProduct, handleHideProduct, handleHideVariant, handleUpdateProduct } from 'services/admin/product-service'
 
 
 const postCreateProduct = async (req: Request, res: Response) => {
@@ -95,6 +95,24 @@ const postUpdateProduct = async (req: Request, res: Response) => {
     }
 }
 
+
+//variants
+const postHideVariant = async (req: Request, res: Response) => {
+    const id = req.params.id
+    try {
+        const message = await handleHideVariant(id)
+        return res.status(201).json({
+            message: "Variant hidden successfully",
+            data: message,
+        });
+    } catch (error: any) {
+        console.error("Error hiding variant:", error);
+        return res.status(500).json({
+            message: "Failed to hide variant",
+            error: error.message,
+        });
+    }
+}
 export {
-    postCreateProduct, postUpdateProduct, postHideProduct
+    postCreateProduct, postUpdateProduct, postHideProduct,postHideVariant
 }

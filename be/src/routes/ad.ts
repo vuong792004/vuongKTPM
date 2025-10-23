@@ -3,7 +3,7 @@ import express, { Express } from 'express'
 import fileUploadMiddleware from 'src/middleware/multer'
 import { verifyToken } from 'src/middleware/verifyToken'
 import { getOrders, updateStatusOrder } from 'controllers/admin/order-controller'
-import { postCreateProduct, postHideProduct, postUpdateProduct } from 'controllers/admin/product-controller'
+import { postCreateProduct, postHideProduct, postHideVariant, postUpdateProduct } from 'controllers/admin/product-controller'
 
 const router = express.Router()
 
@@ -22,6 +22,9 @@ const webRoutes = (app: Express) => {
     router.post("/admin/products", fileUploadMiddleware("productImg", "product"), verifyToken, postCreateProduct)
     router.put("/admin/products/:id", fileUploadMiddleware("productImg", "product"), verifyToken, postUpdateProduct)
     router.put("/admin/hide-product/:id", verifyToken, postHideProduct)
+
+ //variants
+    router.put("/admin/hide-variant/:id", verifyToken, postHideVariant)
 
     app.use("/", router)
 }
