@@ -382,7 +382,36 @@ const handlePlaceOrder = async (
     }
 };
 
+//order history
+const listOrdersByUserId = async (userId: number) => {
+    try {
+        const orders = await prisma.order.findMany({
+            where: {
+                user_id: userId
+            },
+            include: {
+                items: {
+                    include: {
+                        variant: {
+                            include: {
+                                product: true
+                            }
+                        }
+                    }
+                }
+            },
+        });
+        if (!orders || orders.length === 0) {
+            return []
+        }
+        return orders;
+    } catch (error: any) {
+        throw new Error("Có lỗi xảy ra khi lấy lịch sử đặt hàng");
+    }
+};
+
 export {
     countTotalProductClientPages, fetchProductsPaginated, fetchAllProducts, getProductById, getAllCategory
-    , getProductInCart, addProductToCart, handleDeleteProductInCart, updateCartDetailBeforeCheckout, handlePlaceOrder
+    , getProductInCart, addProductToCart, handleDeleteProductInCart, updateCartDetailBeforeCheckout, handlePlaceOrder,
+    listOrdersByUserId
 }
