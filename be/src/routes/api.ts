@@ -1,5 +1,5 @@
 import { filterProducts, getAllProducts, getDetailProduct, getProductsPaginate, getCategory, getCart, postAddProductToCart, deleteProductInCart, postHandleCartToCheckOut, getCheckOutPage, postPlaceOrder, getCartCount, postAddToCartFromDetailPage, getOrderHistory, putCancelOrder } from 'controllers/client/product-controller'
-import { deleteWishlist, getWishlist, postUpdateProfile, postWishlist } from 'controllers/client/user-controller'
+import { deleteAllWishlist, deleteWishlist, getWishlist, postUpdateProfile, postWishlist } from 'controllers/client/user-controller'
 
 import express, { Express } from 'express'
 import { verifyToken } from 'src/middleware/verifyToken'
@@ -45,6 +45,7 @@ const api = (app: Express) => {
     router.get("/wishlist", verifyToken, getWishlist);
     router.post("/wishlist/:productId", verifyToken, postWishlist);
     router.delete("/wishlist/:productId", verifyToken, deleteWishlist);
+    router.delete("/wishlist", verifyToken, deleteAllWishlist);
 
 
     app.use("/api", router)

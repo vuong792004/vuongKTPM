@@ -64,6 +64,15 @@ const handleDeleteWishlist = async (userId: number, productId: number) => {
     })
 }
 
+const handleDeleteAllWishlist = async (userId: number) => {
+
+    return await prisma.wishlist.deleteMany({
+        where: {
+            user_id: userId
+        }
+    })
+}
+
 export {
-    fetchWishList,handlePostWishlist,handleDeleteWishlist
+    fetchWishList,handlePostWishlist,handleDeleteWishlist,handleDeleteAllWishlist
 }
