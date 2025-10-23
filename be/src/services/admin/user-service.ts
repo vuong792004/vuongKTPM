@@ -19,6 +19,28 @@ const getAllUser = async () => {
 };
 
 
+const handleDisabledUser = async (id: number) => {
+    const user = await prisma.user.findUnique({
+        where: {
+            id
+        }
+    })
+
+    if (!user) throw new Error("User not found");
+
+    const newStatus = user.status === "ACTIVE" ? "DISABLED" : "ACTIVE";
+
+    return await prisma.user.update({
+        where: {
+            id
+        },
+        data: {
+            status: newStatus
+        }
+    })
+
+}
 
 
-export { getAllUser }
+
+export { getAllUser ,handleDisabledUser}
