@@ -113,6 +113,46 @@ const postHideVariant = async (req: Request, res: Response) => {
         });
     }
 }
+
+//inventory
+const getInventory = async (req: Request, res: Response) => {
+  try {
+    const products = await prisma.product.findMany({
+      include: {
+        category: true, // nếu muốn lấy luôn category
+        variants: {
+          include: {
+            Inventory: true,
+            InventoryLog: {
+              include: {
+                user: { 
+                  select: {
+                    id: true,
+                    name: true,
+                    email: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    return res.status(200).json({
+      message: "Inventory fetched successfully",
+      data: products,
+    });
+  } catch (error: any) {
+    console.error("Error fetching inventory:", error);
+    return res.status(500).json({
+      message: "Failed to fetch inventory",
+      error: error.message,
+    });
+  }
+};
+
+
 export {
-    postCreateProduct, postUpdateProduct, postHideProduct,postHideVariant
+    postCreateProduct, postUpdateProduct, postHideProduct,postHideVariant,getInventory
 }
