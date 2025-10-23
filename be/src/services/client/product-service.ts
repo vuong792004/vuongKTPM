@@ -99,56 +99,31 @@ const getProductInCart = async (id: number) => {
 };
 
 //add product
-const addProductToCart = async (quantity: number, id_variant: number, user: Express.User) => {
-    const cart = await prisma.cart.findUnique({ where: { user_id: user.id } })
+const addProductToCart = async (
+    quantity: number,
+    id_variant: number,
+    user: Express.User
+) => {
+    // Lấy giỏ hàng
+    let cart = await prisma.cart.findUnique({
+        where: { user_id: user.id },
+    });
 
-    const variant = await prisma.productVariant.findUnique({ where: { id: id_variant } })
+    // Lấy variant + stock
+    const variant = await prisma.productVariant.findUnique({
+        where: { id: id_variant },
+        include: { Inventory: true },
+    });
 
-
-    //    nếu đã có giỏ hàng
-    //      -> cập nhật giỏ hàng
-    //      -> cập nhật chi tiết giỏ hàng -> nếu chưa có, tạo mới.có rồi, cập nhật quantity -> update + insert
-
-    if (cart) {
-        await prisma.cart.update({
-            where: { id: cart.id },
-            data: {
-                sum: {
-                    increment: quantity,
-                }
-            }
-        })
-
-        const currentCartItem = await prisma.cartItem.findFirst({
-            where: {
-                cart_id: cart.id,
-                variant_id: id_variant
-            }
-        })
-
-        await prisma.cartItem.upsert({
-            where: {
-                item_id: currentCartItem?.item_id ?? 0
-            },
-            update: {
-                quantity: {
-                    increment: quantity
-                }
-            },
-            create: {
-                price: variant.price,
-                quantity: quantity,
-                variant_id: id_variant,
-                cart_id: cart.id
-            }
-        })
+    if (!variant) {
+        return { success: false, message: "Variant not found" };
     }
-    else {
-        // nếu chưa có giỏ hàng
-        //    -> tạo mới giỏ hàng
-        //    -> tạo mới chi tiết giỏ hàng
 
-        await prisma.cart.create({
+    const stock = variant.Inventory?.[0]?.stock ?? 0;
+
+    // Nếu chưa có giỏ → tạo mới
+    if (!cart) {
+        cart = await prisma.cart.create({
             data: {
                 user_id: user.id,
                 sum: quantity,
@@ -157,15 +132,72 @@ const addProductToCart = async (quantity: number, id_variant: number, user: Expr
                         {
                             variant_id: variant.id,
                             price: variant.price,
-                            quantity: quantity
-                        }
-                    ]
-                }
+                            quantity: quantity,
+                        },
+                    ],
+                },
             },
+        });
 
-        })
+        return {
+            success: true,
+            message: "Added to cart successfully",
+            currentQuantity: quantity,
+            stock,
+        };
     }
-}
+
+    // Nếu có giỏ hàng → tìm item
+    const currentCartItem = await prisma.cartItem.findFirst({
+        where: { cart_id: cart.id, variant_id: id_variant },
+    });
+
+    const currentQuantity = currentCartItem ? currentCartItem.quantity : 0;
+    const newQuantity = currentQuantity + quantity;
+
+    //  Check vượt stock
+    if (newQuantity > stock) {
+        return {
+            success: false,
+            message: `Not enough stock. Only ${stock} available.`,
+            currentQuantity,
+            stock,
+        };
+    }
+
+    // Update cart sum
+    await prisma.cart.update({
+        where: { id: cart.id },
+        data: {
+            sum: { increment: quantity },
+        },
+    });
+
+    //  Update hoặc create item
+    if (currentCartItem) {
+        await prisma.cartItem.update({
+            where: { item_id: currentCartItem.item_id },
+            data: { quantity: newQuantity },
+        });
+    } else {
+        await prisma.cartItem.create({
+            data: {
+                price: variant.price,
+                quantity: quantity,
+                variant_id: id_variant,
+                cart_id: cart.id,
+            },
+        });
+    }
+
+    return {
+        success: true,
+        message: "Added to cart successfully",
+        currentQuantity: newQuantity,
+        stock,
+    };
+};
+
 
 const handleDeleteProductInCart = async (cartItemId: string, sumCart: number, userId: number) => {
 

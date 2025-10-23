@@ -260,6 +260,26 @@ const getCartCount = async (req: Request, res: Response) => {
     }
 };
 
+// add product to cart from detail page
+const postAddToCartFromDetailPage = async (req: Request, res: Response) => {
+    const id_variant = +req.params.id;
+    const quantity = +req.body.quantity;
+    const user = req.user;
+
+    try {
+        const result = await addProductToCart(quantity, id_variant, user);
+
+        return res.status(200).json(result);
+
+    } catch (error: any) {
+        return res.status(500).json({
+            success: false,
+            message: "Có lỗi xảy ra khi thêm sản phẩm",
+            error: error.message,
+        });
+    }
+};
+
 //------------------------------------CHECKOUT----------------------------------------------
 const postHandleCartToCheckOut = async (req: Request, res: Response) => {
 
@@ -335,5 +355,5 @@ const postPlaceOrder = async (req: Request, res: Response) => {
 };
 export {
     getAllProducts, getProductsPaginate, getDetailProduct, filterProducts, getCategory, getCart, postAddProductToCart
-    , deleteProductInCart, postHandleCartToCheckOut, getCheckOutPage, postPlaceOrder,getCartCount
+    , deleteProductInCart, postHandleCartToCheckOut, getCheckOutPage, postPlaceOrder,getCartCount,postAddToCartFromDetailPage
 }

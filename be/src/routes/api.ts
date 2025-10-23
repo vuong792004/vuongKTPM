@@ -1,4 +1,4 @@
-import { filterProducts, getAllProducts, getDetailProduct, getProductsPaginate, getCategory, getCart, postAddProductToCart, deleteProductInCart, postHandleCartToCheckOut, getCheckOutPage, postPlaceOrder ,getCartCount} from 'controllers/client/product-controller'
+import { filterProducts, getAllProducts, getDetailProduct, getProductsPaginate, getCategory, getCart, postAddProductToCart, deleteProductInCart, postHandleCartToCheckOut, getCheckOutPage, postPlaceOrder ,getCartCount,postAddToCartFromDetailPage} from 'controllers/client/product-controller'
 import express, { Express } from 'express'
 import { verifyToken } from 'src/middleware/verifyToken'
 const router = express.Router()
@@ -18,6 +18,7 @@ const api = (app: Express) => {
     router.post("/add-product/:id", verifyToken, postAddProductToCart)
     router.delete("/delete-product/:id", verifyToken, deleteProductInCart)
     router.get("/count-cart", verifyToken, getCartCount)
+    router.post("/add-to-cart-from-detail-page/:id", verifyToken, postAddToCartFromDetailPage)
 
 
     //checkout
