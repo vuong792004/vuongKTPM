@@ -2,6 +2,7 @@ import { getUsers,disabledUser,postUpdateUser } from 'controllers/admin/user-con
 import express, { Express } from 'express'
 import fileUploadMiddleware from 'src/middleware/multer'
 import { verifyToken } from 'src/middleware/verifyToken'
+import { getOrders} from 'controllers/admin/order-controller' 
 
 const router = express.Router()
 
@@ -12,6 +13,8 @@ const webRoutes = (app: Express) => {
     router.put("/admin/disabled-users/:id", verifyToken, disabledUser)
     router.put("/admin/users/:userId", fileUploadMiddleware("avatar", "avatar"), verifyToken, postUpdateUser)
 
+    //order
+    router.get("/admin/orders", verifyToken, getOrders)
 
     app.use("/", router)
 }
