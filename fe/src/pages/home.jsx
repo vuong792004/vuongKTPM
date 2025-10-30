@@ -9,8 +9,8 @@ const HomePage = () => {
 
     return (
         <>
-
-
+            <Banner />
+            <Product />
         </>
     );
 
