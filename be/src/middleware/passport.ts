@@ -21,7 +21,9 @@ const configPassport = () => {
                 if (!user) {
                     return done(null, false, { message: 'Incorrect email/password.' });
                 }
-
+                if (user.status === "DISABLED") {
+                    return done(null, false, { message: 'Your account has been disabled. Please contact support.' });
+                }
                 const isMatch = await comparePassword(password, user.password);
                 if (!isMatch) {
                     return done(null, false, { message: 'Incorrect email/password.' });
