@@ -44,7 +44,12 @@ const filterProducts = (filters) => {
     return axios.get(URL_BACKEND, { params: filters });
 };
 
+const getProductById = (id) => {
+    const URL_BACKEND = `/api/product/${id}`;
+    return axios.get(URL_BACKEND);
+}
+
 
 export {
-    postLogin, getAccountAPI, getCartCount, postRegister, getAllCategory, filterProducts
+    postLogin, getAccountAPI, getCartCount, postRegister, getAllCategory, filterProducts, getProductById
 }

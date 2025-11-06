@@ -4,4 +4,10 @@ GD3: wishlist,  profile user , review
 GD4: Admin
 
 
-product ở home đang chưa lấy rating
+cho GD2:
+ chưa add product to cart ở trang detail
+
+cho GD3:
+ product ở home đang chưa lấy rating, 
+ chưa add wishlist
+ trang detail product chưa có phần review, phần sao trên component chi tiet spham

@@ -13,6 +13,7 @@ import LoginPage from './pages/login.jsx';
 import { AuthWrapper } from './components/context/auth.context.jsx';
 import { App as AntdApp } from "antd";
 import GuestRoute from './pages/guest.route.jsx';
+import DetailProductPage from './pages/detailProduct.jsx';
 
 
 const router = createBrowserRouter([
@@ -22,6 +23,8 @@ const router = createBrowserRouter([
     errorElement: <ErrorPage />,
     children: [
       { index: true, element: <HomePage /> },
+      { path: "/product/:id", element: <DetailProductPage /> },
+
     ]
   },
   {
