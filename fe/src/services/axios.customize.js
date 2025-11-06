@@ -1,11 +1,6 @@
 import axios from "axios";
 import NProgress from 'nprogress';
 
-//Có baseURL dùng chung (từ .env).
-//Tự động gắn token khi có.
-//Hiển thị thanh loading mỗi lần gọi API.
-//Chuẩn hoá response/trả lỗi về cho FE dễ xử lý.
-
 NProgress.configure({
     showSpinner: false,
     trickleSpeed: 100,

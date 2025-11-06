@@ -1,4 +1,4 @@
-import { filterProducts, getAllProducts, getDetailProduct, getProductsPaginate, getCategory, getCart, postAddProductToCart, deleteProductInCart, postHandleCartToCheckOut, getCheckOutPage, postPlaceOrder ,getCartCount,postAddToCartFromDetailPage, getOrderHistory, putCancelOrder} from 'controllers/client/product-controller'
+import { filterProducts, getAllProducts, getDetailProduct, getProductsPaginate, getCategory, getCart, postAddProductToCart, deleteProductInCart, postHandleCartToCheckOut, getCheckOutPage, postPlaceOrder, getCartCount, postAddToCartFromDetailPage, getOrderHistory, putCancelOrder } from 'controllers/client/product-controller'
 import express, { Express } from 'express'
 import { verifyToken } from 'src/middleware/verifyToken'
 const router = express.Router()
@@ -26,12 +26,13 @@ const api = (app: Express) => {
     router.get("/checkout", verifyToken, getCheckOutPage); //lấy thông tin giỏ hàng của user chuẩn bị thanh toán
     router.post("/place-order", verifyToken, postPlaceOrder); // thực hiện đặt hàng
 
-     //order
+    //order
     router.get("/order-history", verifyToken, getOrderHistory);
     router.put("/cancel-order/:orderId", verifyToken, putCancelOrder);
 
 
     app.use("/api", router)
+
 
 
 }

@@ -7,6 +7,7 @@ import cors from 'cors'
 import configPassport from './middleware/passport'
 import passport from 'passport'
 import authRoute from 'routes/auth'
+import apiRoute from 'routes/api'
 
 const app = express()
 
@@ -45,7 +46,7 @@ app.use(cors({
 
 //config routes
 authRoute(app)
-
+apiRoute(app)
 
 //mock data
 initDatabase()

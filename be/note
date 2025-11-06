@@ -1,0 +1,13 @@
+GD1: đăng xuất đăng nhập, auth base code, hiển thị product, trang chi tiết product
+GD2: Cart, Đặt hàng , order
+GD3: wishlist,  profile user , review
+GD4: Admin
+
+
+cho GD2:
+ chưa add product to cart ở trang detail
+
+cho GD3:
+ product ở home đang chưa lấy rating, 
+ chưa add wishlist
+ trang detail product chưa có phần review, phần sao trên component chi tiet spham

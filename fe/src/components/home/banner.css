@@ -1,0 +1,20 @@
+.ant-carousel .slick-dots {
+    bottom: 20px !important;
+}
+
+.banner-image {
+    height: 500px;
+    object-fit: cover;
+    width: 100%;
+}
+
+/* Dot bình thường */
+.ant-carousel .slick-dots li button {
+    background: gray !important;
+    opacity: 0.5;
+}
+
+.ant-carousel .slick-dots li.slick-active button {
+    background: rgb(126, 126, 126) !important;
+    opacity: 1;
+}
