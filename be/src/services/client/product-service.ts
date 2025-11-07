@@ -89,7 +89,13 @@ const getProductInCart = async (id: number) => {
                 cart_id: cart.id
             },
             include: {
-                variant: true
+                variant: {
+                    include: {
+                        product: true,
+                        Inventory: true
+                    },
+
+                }
             }
         })
     }
@@ -97,6 +103,7 @@ const getProductInCart = async (id: number) => {
     return [];
 
 };
+
 
 //add product
 const addProductToCart = async (
@@ -466,5 +473,5 @@ const cancelOrderByUserId = async (userId: number, orderId: number) => {
 export {
     countTotalProductClientPages, fetchProductsPaginated, fetchAllProducts, getProductById, getAllCategory
     , getProductInCart, addProductToCart, handleDeleteProductInCart, updateCartDetailBeforeCheckout, handlePlaceOrder,
-    listOrdersByUserId,cancelOrderByUserId
+    listOrdersByUserId, cancelOrderByUserId
 }
