@@ -25,6 +25,9 @@ import AdminLayout from './admin/AdminLayout.jsx';
 import Dashboard from './admin/pages/Dashboard.jsx';
 import ProductManagement from './admin/pages/ProductManagement.jsx';
 import CategoryManagement from './admin/pages/CategoryManagement.jsx';
+import InventoryManagement from './admin/pages/InventoryManagement.jsx';
+import OrderManagement from './admin/pages/OrderManagement.jsx';
+import UserManagement from './admin/pages/UserManagement.jsx';
 
 
 const router = createBrowserRouter([
@@ -97,6 +100,9 @@ const router = createBrowserRouter([
       { index: true, element: <Dashboard /> },
       { path: "products", element: <ProductManagement /> },
       { path: "categories", element: <CategoryManagement /> },
+      { path: "users", element: <UserManagement /> },
+      { path: "orders", element: <OrderManagement /> },
+      { path: "inventory", element: <InventoryManagement /> },
     ],
   },
 ]);
