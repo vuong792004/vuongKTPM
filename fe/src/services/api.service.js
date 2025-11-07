@@ -91,8 +91,17 @@ const getProductById = (id) => {
     return axios.get(URL_BACKEND);
 }
 
+//checkout
+const placeOrder = async (orderData) => {
+    const token = localStorage.getItem("access_token");
+    return axios.post(
+        `/api/place-order`,
+        orderData,
+        { headers: { Authorization: `Bearer ${token}` } }
+    );
+};
 
 export {
     postLogin, getAccountAPI, getCartCount, postRegister, getAllCategory, filterProducts, getProductById,
-    getCart, deleteProductFromCart, updateCartQuantity, addToCartFromDetail
+    getCart, deleteProductFromCart, updateCartQuantity, addToCartFromDetail, placeOrder
 }
