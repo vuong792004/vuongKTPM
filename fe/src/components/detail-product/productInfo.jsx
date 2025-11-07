@@ -1,10 +1,11 @@
 import { useContext, useState, useEffect, useMemo } from "react";
 import './productInfor.css';
 import { Divider, message } from "antd";
+import { addToCartFromDetail } from "../../services/api.service";
 import { MinusOutlined, PlusOutlined } from "@ant-design/icons";
 import { AuthContext } from "../context/auth.context";
 
-const ProductInfor = ({ productInfo }) => {
+const ProductInfor = ({ productInfo, reviews = [] }) => {
     const { user, setCartCount } = useContext(AuthContext);
 
     const [selectedColor, setSelectedColor] = useState("");
@@ -45,18 +46,37 @@ const ProductInfor = ({ productInfo }) => {
         }
     }, [storages]);
 
-    const handleAddToCart = () => {
+    const handleAddToCart = async () => {
         if (!user) {
             message.warning("You need to log in to add products to your cart.");
             return;
         }
 
-        // Fake success message (no API)
-        message.success("Product added to cart successfully!");
-        setCartCount(prev => prev + quantity);
+        try {
+            const res = await addToCartFromDetail(selectedVariant.id, quantity);
+
+            if (res.data.success) {
+                message.success("Product added to cart successfully!");
+                setCartCount(prev => prev + quantity);
+            } else {
+                message.warning(
+                    `You already have ${res.data.currentQuantity} in cart. Only ${res.data.stock} available.`
+                );
+                setQuantity(Math.max(1, res.data.stock - res.data.currentQuantity));
+            }
+        } catch (err) {
+            message.error("Something went wrong. Please try again!");
+        }
     };
 
 
+    // hàm tính trung bình sao
+    const avgRating = useMemo(() => {
+        if (!reviews || reviews.length === 0) return 0;
+        return (
+            reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
+        ).toFixed(1);
+    }, [reviews]);
 
     if (!productInfo || !productInfo.variants) {
         return null;
@@ -79,6 +99,14 @@ const ProductInfor = ({ productInfo }) => {
                     <h1 className="pi-title">{productInfo.name}</h1>
                     <p className="pi-category">{productInfo.category?.name ?? "Unknown category"}</p>
 
+                    {/* rung bình sao */}
+                    <div className="pi-rating">
+                        <span className="stars">
+                            {"★".repeat(Math.round(avgRating)) + "☆".repeat(5 - Math.round(avgRating))}
+                        </span>
+                        <span className="avg-score">{avgRating}</span>
+                        <span className="review-count">({reviews.length} reviews)</span>
+                    </div>
 
                     <p className="pi-price">{selectedVariant?.price}$</p>
 

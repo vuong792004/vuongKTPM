@@ -62,6 +62,18 @@ const updateCartQuantity = async (cartId, itemId, quantity) => {
     );
 };
 
+const addToCartFromDetail = async (productId, quantity = 1) => {
+    const token = localStorage.getItem("access_token");
+    const URL_BACKEND = `${import.meta.env.VITE_BACKEND_URL}/api/add-to-cart-from-detail-page/${productId}`;
+
+    return axios.post(
+        URL_BACKEND,
+        { quantity }, // (mặc định 1)
+        {
+            headers: { Authorization: `Bearer ${token}` },
+        }
+    );
+};
 
 //product
 const getAllCategory = () => {
@@ -82,5 +94,5 @@ const getProductById = (id) => {
 
 export {
     postLogin, getAccountAPI, getCartCount, postRegister, getAllCategory, filterProducts, getProductById,
-    getCart, deleteProductFromCart, updateCartQuantity
+    getCart, deleteProductFromCart, updateCartQuantity, addToCartFromDetail
 }
