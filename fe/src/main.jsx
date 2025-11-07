@@ -20,6 +20,9 @@ import CheckoutPage from './pages/checkout.jsx';
 import OrdersPage from './pages/order.jsx';
 import ProfilePage from './pages/profile.jsx';
 import SupportPage from './pages/support.jsx';
+import AdminRoute from './admin/routes/AdminRoute.jsx';
+import AdminLayout from './admin/AdminLayout.jsx';
+import Dashboard from './admin/pages/Dashboard.jsx';
 
 
 const router = createBrowserRouter([
@@ -63,7 +66,6 @@ const router = createBrowserRouter([
         )
       },
       { path: "/support", element: <SupportPage /> },
-
     ]
   },
   {
@@ -82,7 +84,17 @@ const router = createBrowserRouter([
       </GuestRoute>
     )
   },
-
+  {
+    path: "/admin",
+    element: (
+      <AdminRoute>
+        <AdminLayout />
+      </AdminRoute>
+    ),
+    children: [
+      { index: true, element: <Dashboard /> },
+    ],
+  },
 ]);
 ReactDOM.createRoot(document.getElementById('root')).render(
   <AntdApp>
