@@ -30,6 +30,7 @@ const api = (app: Express) => {
     router.post("/place-order", verifyToken, postPlaceOrder); // thực hiện đặt hàng
 
     //order
+    //order
     router.get("/order-history", verifyToken, getOrderHistory);
     router.put("/cancel-order/:orderId", verifyToken, putCancelOrder);
 
@@ -41,7 +42,7 @@ const api = (app: Express) => {
         postUpdateProfile
     );
 
-     //wishlist 
+    //wishlist 
     router.get("/wishlist", verifyToken, getWishlist);
     router.post("/wishlist/:productId", verifyToken, postWishlist);
     router.delete("/wishlist/:productId", verifyToken, deleteWishlist);
@@ -52,6 +53,7 @@ const api = (app: Express) => {
     router.get("/review/:id", getReview);
 
     app.use("/api", router)
+
 
 
 }

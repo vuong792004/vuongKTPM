@@ -1,0 +1,206 @@
+.pi-wrapper {
+    border: 1px solid #eee;
+    padding: 40px;
+    border-radius: 8px;
+    background-color: #fff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    margin: 30px auto;
+    max-width: 1000px;
+}
+
+.pi-top {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+}
+
+.pi-image {
+    width: 450px;
+    height: 450px;
+    object-fit: cover;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+.pi-details {
+    flex: 1;
+    min-width: 220px;
+    margin-left: 25px;
+}
+
+.pi-title {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.pi-category {
+    color: #666;
+    margin-bottom: 8px;
+}
+
+.pi-price {
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+.pi-inventory {
+    display: flex;
+    gap: 20px;
+    margin: 8px 0 16px;
+    font-size: 14px;
+}
+
+.pi-stock {
+    color: #2ecc71;
+    font-weight: 500;
+}
+
+.pi-sold {
+    color: #e67e22;
+    font-weight: 500;
+}
+
+.pi-outofstock {
+    color: #e74c3c;
+    font-weight: 600;
+}
+
+.pi-add-btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.pi-colors {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.pi-color-dot {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 1px solid #ccc;
+    cursor: pointer;
+}
+
+.pi-add-btn {
+    background-color: #111;
+    color: #fff;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: transform 0.2s;
+    margin-top: 10px;
+}
+
+.pi-add-btn:hover {
+    background-color: #ececec;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    color: black;
+}
+
+.pi-description {
+    margin-top: 20px;
+}
+
+.pi-description h3 {
+    margin-bottom: 6px;
+}
+
+.pi-description p {
+    line-height: 1.6;
+}
+
+/* Khi chọn màu */
+.pi-color-dot.selected {
+    border: 2px solid #111;
+}
+
+/* Dung lượng */
+.pi-capacities {
+    margin-bottom: 12px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.pi-capacity-btn {
+    padding: 6px 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    cursor: pointer;
+    background-color: #fff;
+    transition: 0.2s;
+}
+
+.pi-capacity-btn:hover {
+    background-color: #f0f0f0;
+}
+
+.pi-capacity-btn.selected {
+    border-color: #111;
+    background-color: #111;
+    color: #fff;
+}
+
+.pi-quantity {
+    margin: 16px 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.pi-quantity-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #f5f5f5;
+    border-radius: 8px;
+    padding: 4px 8px;
+}
+
+.pi-quantity-btn {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.pi-quantity-value {
+    min-width: 24px;
+    text-align: center;
+    font-weight: 600;
+}
+
+.pi-rating {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 8px 0;
+    font-size: 16px;
+}
+
+.pi-rating .stars {
+    color: #ffb400;
+    /* vàng cho sao */
+    font-size: 18px;
+}
+
+.pi-rating .avg-score {
+    font-weight: 600;
+    color: #333;
+}
+
+.pi-rating .review-count {
+    font-size: 14px;
+    color: #666;
+}
