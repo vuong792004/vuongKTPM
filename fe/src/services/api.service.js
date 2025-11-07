@@ -138,9 +138,43 @@ const updateUserProfile = (formData) => {
     });
 };
 
+//wishlist
+const getWishlist = () => {
+    const token = localStorage.getItem("access_token");
+    return axios.get("/api/wishlist", {
+        headers: { Authorization: `Bearer ${token}` }
+    });
+};
+
+const addToWishList = async (productId) => {
+    const token = localStorage.getItem("access_token");
+    return await axios.post(
+        `/api/wishlist/${productId}`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+    );
+};
+
+
+const deleteWishList = (productId) => {
+    const token = localStorage.getItem("access_token");
+    return axios.delete(`/api/wishlist/${productId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+    });
+};
+
+const deleteAllWishList = () => {
+    const token = localStorage.getItem("access_token");
+    return axios.delete("/api/wishlist", {
+        headers: { Authorization: `Bearer ${token}` }
+    });
+};
+
+
 
 export {
     postLogin, getAccountAPI, getCartCount, postRegister, getAllCategory, filterProducts, getProductById,
     getCart, deleteProductFromCart, updateCartQuantity, addToCartFromDetail, placeOrder,
-    cancelOrder, getOrderHistory, updateUserProfile
+    cancelOrder, getOrderHistory, updateUserProfile, getWishlist, addToWishList, deleteWishList,
+    deleteAllWishList
 }

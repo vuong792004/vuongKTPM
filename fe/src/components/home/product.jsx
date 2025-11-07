@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { message, Pagination, Slider } from "antd";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import "./product.css";
-import { filterProducts, getAllCategory } from "../../services/api.service";
+import { filterProducts, getAllCategory, addToWishList } from "../../services/api.service";
 
 const ProductPage = () => {
     const [searchParams, setSearchParams] = useSearchParams();
@@ -52,9 +52,18 @@ const ProductPage = () => {
         }
     };
 
-    // Add to wishlist - mock success
-    const handleAddWishlist = () => {
-        message.success("Added successfully to wishlist!");
+    // Add to wishlist
+    const handleAddWishlist = async (productId) => {
+        try {
+            const res = await addToWishList(productId);
+            const { status, message: msg } = res.data;
+
+            if (status === "success") message.success(msg);
+            else if (status === "warning") message.warning(msg);
+            else message.error(msg || "Có lỗi xảy ra");
+        } catch {
+            message.error("Lỗi hệ thống!");
+        }
     };
 
     // Effect filter
@@ -209,7 +218,7 @@ const ProductPage = () => {
 
                                     <p className="product-price">${item.basePrice}</p>
                                     <button className="wishlist-button"
-                                        onClick={handleAddWishlist}
+                                        onClick={() => handleAddWishlist(item.id)}
                                     >
                                         Add to Wishlist
                                     </button>

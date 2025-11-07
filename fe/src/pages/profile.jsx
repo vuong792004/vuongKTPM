@@ -2,10 +2,11 @@ import { useContext, useEffect, useState } from 'react';
 import '../styles/profile.css';
 import { AuthContext } from '../components/context/auth.context';
 import dayjs from "dayjs";
-import { updateUserProfile } from '../services/api.service';
-import { Modal, message, Popconfirm } from "antd";
+import { deleteAllWishList, deleteWishList, getWishlist, updateUserProfile } from '../services/api.service';
+import { Modal, message } from "antd";
 import { DeleteOutlined, ExclamationCircleOutlined, HeartFilled } from "@ant-design/icons";
 import { useNavigate } from 'react-router-dom';
+import { Popconfirm } from "antd";
 
 const tabs = [
     { key: 'overview', label: 'Overview' },
@@ -20,7 +21,9 @@ const ProfilePage = () => {
     const [activeTab, setActiveTab] = useState('overview');
     const { user, setUser } = useContext(AuthContext);
 
-
+    //wishlist
+    const [wishlist, setWishlist] = useState([]);
+    const [loadingWishlist, setLoadingWishlist] = useState(false);
 
     // update profile
     const [formData, setFormData] = useState({
@@ -48,6 +51,23 @@ const ProfilePage = () => {
         }
     }, [user]);
 
+    useEffect(() => {
+        if (activeTab === 'wishlist') {
+            setLoadingWishlist(true);
+            getWishlist()
+                .then(res => {
+                    if (Array.isArray(res.data)) {
+                        setWishlist(res.data);
+                    } else if (res.data?.data) {
+                        setWishlist(res.data.data);
+                    } else {
+                        setWishlist([]);
+                    }
+                })
+                .catch(() => setWishlist([]))
+                .finally(() => setLoadingWishlist(false));
+        }
+    }, [activeTab]);
 
     const year = dayjs(user.createdAt).year();
 
@@ -95,6 +115,30 @@ const ProfilePage = () => {
                 }
             }
         });
+    };
+
+    // Xoá 1 sản phẩm
+    const handleRemove = async (id) => {
+        try {
+            await deleteWishList(id);
+            setWishlist(prev => prev.filter(item => item.id !== id));
+            message.success("Removed from wishlist!");
+        } catch (err) {
+            console.error("Error removing wishlist item:", err);
+            message.error("Failed to remove product.");
+        }
+    };
+
+    // Xoá toàn bộ
+    const handleClearAll = async () => {
+        try {
+            await deleteAllWishList();
+            setWishlist([]);
+            message.success("All items removed from wishlist!");
+        } catch (err) {
+            console.error("Error clearing wishlist:", err);
+            message.error("Failed to clear wishlist.");
+        }
     };
 
 
@@ -202,6 +246,72 @@ const ProfilePage = () => {
                             </form>
                         </div>
                     )}
+
+                    {activeTab === 'wishlist' && (
+                        <div className="profile-card">
+                            <div className="wishlist-header">
+                                <h2>My Wishlist</h2>
+                                {wishlist.length > 0 && (
+                                    <Popconfirm
+                                        title="Delete all items"
+                                        description="Are you sure you want to clear your wishlist?"
+                                        okText="Yes"
+                                        cancelText="No"
+                                        onConfirm={handleClearAll}
+                                        icon={<ExclamationCircleOutlined style={{ color: '#faad14' }} />}
+                                    >
+                                        <button className="wishlist-clear-btn">
+                                            <DeleteOutlined /> Delete All
+                                        </button>
+                                    </Popconfirm>
+                                )}
+                            </div>
+
+                            {loadingWishlist ? (
+                                <p>Loading...</p>
+                            ) : wishlist.length > 0 ? (
+                                <div className="wishlist-grid">
+                                    {wishlist.map(item => (
+                                        <div key={item.id} className="wishlist-item">
+                                            <img
+                                                src={`${import.meta.env.VITE_BACKEND_URL}/product/${item.product.image}`}
+                                                alt={item.product.name}
+                                                onClick={() => navigate(`/product/${item.product.id}`)}
+                                                className="wishlist-image"
+                                            />
+                                            <div className="wishlist-info">
+                                                <h4
+                                                    className="wishlist-name"
+                                                    onClick={() => navigate(`/product/${item.product.id}`)}
+                                                >
+                                                    {item.product.name}
+                                                </h4>
+                                                <p><span className="wishlist-label">Category:</span> {item.product.category?.name}</p>
+                                                <p><span className="wishlist-label">Base Price:</span>
+                                                    <span className="wishlist-price">${item.product.basePrice}</span>
+                                                </p>
+                                            </div>
+                                            <Popconfirm
+                                                title="Remove item"
+                                                description="Are you sure you want to remove this product?"
+                                                okText="Yes"
+                                                cancelText="No"
+                                                onConfirm={() => handleRemove(item.id)}
+                                                icon={<ExclamationCircleOutlined style={{ color: '#faad14' }} />}
+                                            >
+                                                <button className="wishlist-remove-btn">
+                                                    <HeartFilled style={{ color: "red" }} /> Remove
+                                                </button>
+                                            </Popconfirm>
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <p style={{ color: "#999" }}>No items in wishlist.</p>
+                            )}
+                        </div>
+                    )}
+
 
 
                 </section>
