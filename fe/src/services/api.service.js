@@ -170,11 +170,27 @@ const deleteAllWishList = () => {
     });
 };
 
+//review
+const getReview = (productId) => {
+    const URL_BACKEND = `/api/review/${productId}`;
+    return axios.get(URL_BACKEND);
+}
+const postReview = (productId, rating, comment, token) => {
+    const URL_BACKEND = `/api/review`;
+    const data = { productId, rating, comment };
+
+    return axios.post(URL_BACKEND, data, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+};
+
 
 
 export {
     postLogin, getAccountAPI, getCartCount, postRegister, getAllCategory, filterProducts, getProductById,
     getCart, deleteProductFromCart, updateCartQuantity, addToCartFromDetail, placeOrder,
     cancelOrder, getOrderHistory, updateUserProfile, getWishlist, addToWishList, deleteWishList,
-    deleteAllWishList
+    deleteAllWishList, getReview, postReview
 }
