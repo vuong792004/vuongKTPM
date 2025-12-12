@@ -79,7 +79,7 @@ const ProductPage = () => {
             else if (status === "warning") message.warning(msg);
             else message.error(msg || "Có lỗi xảy ra");
         } catch {
-            message.error("Lỗi hệ thống!");
+            message.error("Please login to add product to wishlist");
         }
     };
 

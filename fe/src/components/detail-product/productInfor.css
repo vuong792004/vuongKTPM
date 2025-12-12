@@ -108,6 +108,26 @@
     color: black;
 }
 
+.pi-add-wishlist-btn {
+    background-color: #000000;
+    color: #fff;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: transform 0.2s;
+    margin-top: 10px;
+    margin-left: 10px;
+}
+
+.pi-add-wishlist-btn:hover {
+    background-color: #ececec;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    color: black;
+}
+
 .pi-description {
     margin-top: 20px;
 }

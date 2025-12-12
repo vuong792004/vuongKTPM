@@ -61,15 +61,13 @@ const getUserSumCart = async (user_id: number) => {
 }
 const getUserByid = async (user_id: number) => {
     const user = await prisma.user.findUnique({
-        where: {
-            id: user_id
-        },
-        omit: {
-            password: true
-        }
+        where: { id: user_id }
     })
 
-    return user
+    if (!user) return null
+
+    const { password, ...safeUser } = user
+    return safeUser
 }
 
 export { generateToken, isEmailExist, createUser, hashPassword, getUserSumCart, getUserByid, comparePassword }
