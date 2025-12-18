@@ -1,15 +1,52 @@
-name: KTPM CI Demo
+name: KTPM AppleStore - GitHub Actions Testing
 
 on:
   push:
     branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
 
 jobs:
-  ci-check:
+  backend-ci:
+    name: Backend CI Check
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: be
+
     steps:
-      - name: Checkout source
+      - name: Checkout source code
         uses: actions/checkout@v4
 
-      - name: CI validation
-        run: echo "GitHub Actions CI triggered successfully"
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install backend dependencies
+        run: npm install
+
+      - name: Backend CI validation
+        run: echo "Backend CI passed (no automated tests yet)"
+
+  frontend-ci:
+    name: Frontend Build Check
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: fe
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install frontend dependencies
+        run: npm install
+
+      - name: Build frontend
+        run: npm run build
