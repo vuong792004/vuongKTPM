@@ -1,7 +1,10 @@
 import { filterProducts, getAllProducts, getDetailProduct, getProductsPaginate, getCategory, getCart, postAddProductToCart, deleteProductInCart, postHandleCartToCheckOut, getCheckOutPage, postPlaceOrder, getCartCount, postAddToCartFromDetailPage, getOrderHistory, putCancelOrder } from 'controllers/client/product-controller'
+import { deleteAllWishlist, deleteWishlist, getReview, getWishlist, postReview, postUpdateProfile, postWishlist } from 'controllers/client/user-controller'
+
 import express, { Express } from 'express'
 import { verifyToken } from 'src/middleware/verifyToken'
 const router = express.Router()
+import fileUploadMiddleware from 'src/middleware/multer'
 
 const api = (app: Express) => {
 
@@ -27,9 +30,27 @@ const api = (app: Express) => {
     router.post("/place-order", verifyToken, postPlaceOrder); // thực hiện đặt hàng
 
     //order
+    //order
     router.get("/order-history", verifyToken, getOrderHistory);
     router.put("/cancel-order/:orderId", verifyToken, putCancelOrder);
 
+    //user
+    router.put(
+        "/profile",
+        verifyToken,
+        fileUploadMiddleware("avatar", "avatar"), // field name = "avatar", lưu vào public/avatar
+        postUpdateProfile
+    );
+
+    //wishlist 
+    router.get("/wishlist", verifyToken, getWishlist);
+    router.post("/wishlist/:productId", verifyToken, postWishlist);
+    router.delete("/wishlist/:productId", verifyToken, deleteWishlist);
+    router.delete("/wishlist", verifyToken, deleteAllWishlist);
+
+    //review
+    router.post("/review", verifyToken, postReview);
+    router.get("/review/:id", getReview);
 
     app.use("/api", router)
 

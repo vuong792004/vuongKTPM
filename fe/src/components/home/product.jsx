@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { message, Pagination, Slider } from "antd";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import "./product.css";
-import { filterProducts, getAllCategory } from "../../services/api.service";
+import { addToWishList, filterProducts, getAllCategory, getReview } from "../../services/api.service";
 
 const ProductPage = () => {
     const [searchParams, setSearchParams] = useSearchParams();
@@ -11,6 +11,7 @@ const ProductPage = () => {
 
     const [products, setProducts] = useState([]);
     const [categories, setCategories] = useState([]);
+    const [ratings, setRatings] = useState({}); // lưu avgRating + count theo productId
     const [page, setPage] = useState(1);
     const pageSize = 8;
 
@@ -36,13 +37,30 @@ const ProductPage = () => {
     // Load products
     const loadProducts = (filters = {}, scroll = true) => {
         filterProducts(filters)
-            .then((res) => {
+            .then(async (res) => {
                 let list = [];
                 if (res.data?.data) list = res.data.data;
                 else if (Array.isArray(res.data)) list = res.data;
 
                 list = list.filter((p) => p.status === true);
+
                 setProducts(list);
+
+                // gọi api lấy review cho từng sp
+                const ratingData = {};
+                for (const p of list) {
+                    try {
+                        const r = await getReview(p.id);
+                        const reviews = r.data || [];
+                        const avg = reviews.length
+                            ? (reviews.reduce((s, rr) => s + rr.rating, 0) / reviews.length).toFixed(1)
+                            : 0;
+                        ratingData[p.id] = { avgRating: avg, count: reviews.length };
+                    } catch {
+                        ratingData[p.id] = { avgRating: 0, count: 0 };
+                    }
+                }
+                setRatings(ratingData);
             })
             .catch(() => setProducts([]));
 
@@ -52,9 +70,17 @@ const ProductPage = () => {
         }
     };
 
-    // Add to wishlist - mock success
-    const handleAddWishlist = () => {
-        message.success("Added successfully to wishlist!");
+    const handleAddWishlist = async (productId) => {
+        try {
+            const res = await addToWishList(productId);
+            const { status, message: msg } = res.data;
+
+            if (status === "success") message.success(msg);
+            else if (status === "warning") message.warning(msg);
+            else message.error(msg || "Có lỗi xảy ra");
+        } catch {
+            message.error("Lỗi hệ thống!");
+        }
     };
 
     // Effect filter
@@ -189,32 +215,42 @@ const ProductPage = () => {
                 <div className="product-results">
                     {paginatedProducts.length > 0 ? (
                         <div className="product-container">
-                            {paginatedProducts.map((item) => (
-                                <div key={item.id} className="product-card">
-                                    <img
-                                        src={`${import.meta.env.VITE_BACKEND_URL}/product/${item.image}`}
-                                        alt={item.name}
-                                        className="product-image"
-                                        onClick={() => goToDetailPage(item.id)}
-                                    />
-                                    <h3
-                                        className="product-name"
-                                        onClick={() => goToDetailPage(item.id)}
-                                    >
-                                        {item.name}
-                                    </h3>
-                                    <p className="product-category">{item.category?.name}</p>
+                            {paginatedProducts.map((item) => {
+                                const rating = ratings[item.id] || { avgRating: 0, count: 0 };
+                                return (
+                                    <div key={item.id} className="product-card">
+                                        <img
+                                            src={`${import.meta.env.VITE_BACKEND_URL}/product/${item.image}`}
+                                            alt={item.name}
+                                            className="product-image"
+                                            onClick={() => goToDetailPage(item.id)}
+                                        />
+                                        <h3
+                                            className="product-name"
+                                            onClick={() => goToDetailPage(item.id)}
+                                        >
+                                            {item.name}
+                                        </h3>
+                                        <p className="product-category">{item.category?.name}</p>
 
-                                    {/* Rating temporarily hidden */}
+                                        {/*  Rating */}
+                                        <div className="product-rating">
+                                            <span className="stars">
+                                                {"★".repeat(Math.round(rating.avgRating)) +
+                                                    "☆".repeat(5 - Math.round(rating.avgRating))}
+                                            </span>
+                                            <span className="score">&nbsp;{rating.avgRating}</span>
+                                        </div>
 
-                                    <p className="product-price">${item.basePrice}</p>
-                                    <button className="wishlist-button"
-                                        onClick={handleAddWishlist}
-                                    >
-                                        Add to Wishlist
-                                    </button>
-                                </div>
-                            ))}
+                                        <p className="product-price">${item.basePrice}</p>
+                                        <button className="wishlist-button"
+                                            onClick={() => handleAddWishlist(item.id)}
+                                        >
+                                            Add to Wishlist
+                                        </button>
+                                    </div>
+                                );
+                            })}
                         </div>
                     ) : (
                         <div className="product-empty-state">

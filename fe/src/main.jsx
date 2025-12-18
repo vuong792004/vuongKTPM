@@ -18,6 +18,7 @@ import PrivateRoute from './pages/private.route.jsx';
 import CartPage from './pages/cart.jsx';
 import CheckoutPage from './pages/checkout.jsx';
 import OrdersPage from './pages/order.jsx';
+import ProfilePage from './pages/profile.jsx';
 
 
 const router = createBrowserRouter([
@@ -49,6 +50,14 @@ const router = createBrowserRouter([
         element: (
           <PrivateRoute>
             <OrdersPage />
+          </PrivateRoute>
+        )
+      },
+      {
+        path: "/profile",
+        element: (
+          <PrivateRoute>
+            <ProfilePage />
           </PrivateRoute>
         )
       },

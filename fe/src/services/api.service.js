@@ -128,8 +128,69 @@ const cancelOrder = (orderId) => {
     );
 };
 
+//profile
+const updateUserProfile = (formData) => {
+    return axios.put("/api/profile", formData, {
+        headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`
+        }
+    });
+};
+
+//wishlist
+const getWishlist = () => {
+    const token = localStorage.getItem("access_token");
+    return axios.get("/api/wishlist", {
+        headers: { Authorization: `Bearer ${token}` }
+    });
+};
+
+const addToWishList = async (productId) => {
+    const token = localStorage.getItem("access_token");
+    return await axios.post(
+        `/api/wishlist/${productId}`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+    );
+};
+
+
+const deleteWishList = (productId) => {
+    const token = localStorage.getItem("access_token");
+    return axios.delete(`/api/wishlist/${productId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+    });
+};
+
+const deleteAllWishList = () => {
+    const token = localStorage.getItem("access_token");
+    return axios.delete("/api/wishlist", {
+        headers: { Authorization: `Bearer ${token}` }
+    });
+};
+
+//review
+const getReview = (productId) => {
+    const URL_BACKEND = `/api/review/${productId}`;
+    return axios.get(URL_BACKEND);
+}
+const postReview = (productId, rating, comment, token) => {
+    const URL_BACKEND = `/api/review`;
+    const data = { productId, rating, comment };
+
+    return axios.post(URL_BACKEND, data, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+};
+
+
+
 export {
     postLogin, getAccountAPI, getCartCount, postRegister, getAllCategory, filterProducts, getProductById,
     getCart, deleteProductFromCart, updateCartQuantity, addToCartFromDetail, placeOrder,
-    cancelOrder, getOrderHistory
+    cancelOrder, getOrderHistory, updateUserProfile, getWishlist, addToWishList, deleteWishList,
+    deleteAllWishList, getReview, postReview
 }
