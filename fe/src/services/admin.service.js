@@ -51,27 +51,33 @@ const getAllProduct = () => {
 }
 
 const createProduct = (data) => {
-
     const formData = new FormData();
+
     formData.append("name", data.name);
-    formData.append("basePrice", data.basePrice);
-    formData.append("description", data.description);
-    formData.append("category_id", data.category_id);
+    formData.append("basePrice", String(data.basePrice));
+    formData.append("description", data.description || "");
+    formData.append("category_id", String(data.category_id));
 
-    if (data.productImg && data.productImg[0]) {
+    if (data.productImg?.[0]?.originFileObj) {
         formData.append("productImg", data.productImg[0].originFileObj);
-    }//dùng formData axios sẽ tự thêm header "Content-Type": "multipart/form-data; boundary=..."
+    }
 
-    formData.append("variants", JSON.stringify(data.variants));
+    formData.append(
+        "variants",
+        JSON.stringify(
+            Array.isArray(data.variants)
+                ? data.variants.map(v => ({ ...v, status: Boolean(v.status) }))
+                : []
+        )
+    );
 
-    const URL_BACKEND = `/admin/products`;
-    const token = localStorage.getItem("access_token");
-    return axios.post(URL_BACKEND, formData, {
+    return axios.post("/admin/products", formData, {
         headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },
     });
 };
+
 const updateProduct = (id, data) => {
 
     const formData = new FormData();

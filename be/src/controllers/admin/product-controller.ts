@@ -4,22 +4,21 @@ import { Response, Request } from 'express'
 import { handleCreateProduct, handleHideProduct, handleHideVariant, handleUpdateProduct } from 'services/admin/product-service'
 
 
-const postCreateProduct = async (req: Request, res: Response) => {
+const postCreateProduct = async (req, res) => {
     try {
-        const userId = req.user?.id as number;
+        const userId = req.user?.id;
+        if (!userId) throw new Error("Unauthorized");
+
         const { name, basePrice, description, category_id } = req.body;
-        const file = req.file;
-        const productImg = file?.filename ?? undefined;
+        if (!name || !basePrice || !category_id)
+            throw new Error("Missing required fields");
 
-        // Parse variants
-        let variants = [];
-        try {
-            variants = JSON.parse(req.body.variants);
-        } catch (e) {
-            variants = [];
-        }
+        const variants = JSON.parse(req.body.variants || "[]");
+        if (variants.length === 0)
+            throw new Error("Variants are required");
 
-        // variants FE gửi là array [{ color, storage, price, stock }]
+        const productImg = req.file?.filename;
+
         const newProduct = await handleCreateProduct(
             name,
             basePrice,
@@ -30,18 +29,14 @@ const postCreateProduct = async (req: Request, res: Response) => {
             variants
         );
 
-        return res.status(201).json({
-            message: "Product created successfully",
-            data: newProduct,
-        });
-    } catch (error: any) {
-        console.error("Error creating product:", error);
-        return res.status(500).json({
-            message: "Failed to create product",
-            error: error.message,
-        });
+        if (!newProduct) throw new Error("Create failed");
+
+        return res.status(201).json({ data: newProduct });
+    } catch (e) {
+        return res.status(500).json({ message: e.message });
     }
 };
+
 
 
 
@@ -116,43 +111,43 @@ const postHideVariant = async (req: Request, res: Response) => {
 
 //inventory
 const getInventory = async (req: Request, res: Response) => {
-  try {
-    const products = await prisma.product.findMany({
-      include: {
-        category: true, // nếu muốn lấy luôn category
-        variants: {
-          include: {
-            Inventory: true,
-            InventoryLog: {
-              include: {
-                user: { 
-                  select: {
-                    id: true,
-                    name: true,
-                    email: true,
-                  },
+    try {
+        const products = await prisma.product.findMany({
+            include: {
+                category: true, // nếu muốn lấy luôn category
+                variants: {
+                    include: {
+                        Inventory: true,
+                        InventoryLog: {
+                            include: {
+                                user: {
+                                    select: {
+                                        id: true,
+                                        name: true,
+                                        email: true,
+                                    },
+                                },
+                            },
+                        },
+                    },
                 },
-              },
             },
-          },
-        },
-      },
-    });
+        });
 
-    return res.status(200).json({
-      message: "Inventory fetched successfully",
-      data: products,
-    });
-  } catch (error: any) {
-    console.error("Error fetching inventory:", error);
-    return res.status(500).json({
-      message: "Failed to fetch inventory",
-      error: error.message,
-    });
-  }
+        return res.status(200).json({
+            message: "Inventory fetched successfully",
+            data: products,
+        });
+    } catch (error: any) {
+        console.error("Error fetching inventory:", error);
+        return res.status(500).json({
+            message: "Failed to fetch inventory",
+            error: error.message,
+        });
+    }
 };
 
 
 export {
-    postCreateProduct, postUpdateProduct, postHideProduct,postHideVariant,getInventory
+    postCreateProduct, postUpdateProduct, postHideProduct, postHideVariant, getInventory
 }
