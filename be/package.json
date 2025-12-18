@@ -31,7 +31,7 @@
   "homepage": "https://github.com/kthuy1312/Nodejs_Pro#readme",
   "dependencies": {
     "@prisma/client": "6.3.0",
-    "bcrypt": "5.1.1",
+    "bcryptjs": "^3.0.3",
     "cors": "2.8.5",
     "dotenv": "16.4.7",
     "ejs": "3.1.10",
@@ -63,5 +63,8 @@
     "ts-node": "10.9.2",
     "tsconfig-paths": "4.2.0",
     "typescript": "5.7.3"
-  }
+  },
+"prisma": {
+  "seed": "ts-node -r tsconfig-paths/register ./src/config/seed.ts"
+}
 }

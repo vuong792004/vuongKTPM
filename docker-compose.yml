@@ -1,0 +1,38 @@
+services:
+  db:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_DATABASE: ktpm_final
+    ports:
+      - "3307:3306"
+    volumes:
+      - ./init-db:/docker-entrypoint-initdb.d
+      - mysql_data:/var/lib/mysql
+
+  backend:
+    build: 
+      context: ./be
+      dockerfile: Dockerfile
+    ports:
+      - "8888:8888"
+    environment:
+      - DATABASE_URL=mysql://root:123456@db:3306/ktpm_final
+      - JWT_SECRET=mysecretkey
+    depends_on:
+      - db
+    restart: on-failure   
+  frontend:
+    build:
+      context: ./fe
+      dockerfile: Dockerfile
+    ports:
+     - "3000:3000"
+    environment:
+      - VITE_BACKEND_URL=http://localhost:8888
+    depends_on:
+      - backend
+
+volumes:
+  mysql_data:

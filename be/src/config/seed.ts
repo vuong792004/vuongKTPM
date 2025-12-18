@@ -54,6 +54,7 @@ const initDatabase = async () => {
             }
         )
     }
+    const adminUser = await prisma.user.findFirst({ where: { email: "admin@gmail.com" } });
     if (countCategory === 0) {
 
         await prisma.category.createMany(
@@ -321,7 +322,7 @@ const initDatabase = async () => {
                         action_type: "IMPORT",
                         quantity: v.stock,
                         note: "Khởi tạo số lượng ban đầu",
-                        created_by: 1,
+                        created_by: adminUser?.id || 1, // <--- Dùng ID thực tế của admin
                     },
                 });
             }
@@ -377,4 +378,14 @@ const initDatabase = async () => {
 export default initDatabase;
 
 
-
+// Thêm vào cuối file seed.ts
+initDatabase()
+  .then(async () => {
+    await prisma.$disconnect();
+    console.log("Seed hoàn tất!");
+  })
+  .catch(async (e) => {
+    console.error(e);
+    await prisma.$disconnect();
+    process.exit(1);
+  });

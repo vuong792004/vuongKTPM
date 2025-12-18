@@ -134,7 +134,10 @@ const ProductManagement = () => {
     const handleSave = async () => {
         try {
             const values = await form.validateFields();
-
+            if (!values.variants || values.variants.length === 0) {
+                message.error("Product must have at least one variant");
+                return;
+            }
             if (selectedProduct) {
                 await updateProduct(selectedProduct.id, values);
                 message.success("Product updated successfully");
@@ -460,9 +463,7 @@ const ProductManagement = () => {
                                                 <Select.Option value={false}>Hidden</Select.Option>
                                             </Select>
                                         </Form.Item>
-                                        <Button danger onClick={() => remove(name)}>
-                                            Remove
-                                        </Button>
+
 
                                     </Space>
                                 ))}
