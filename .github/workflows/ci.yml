@@ -1,0 +1,15 @@
+name: KTPM CI Demo
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  ci-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: CI validation
+        run: echo "GitHub Actions CI triggered successfully"
