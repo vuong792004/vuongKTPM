@@ -77,7 +77,8 @@ model User {
   reviews   Review[]
   orders    Order[]
   wishlists Wishlist[]
-
+ inventoryLogs InventoryLog[] 
+ 
   @@map("users")
 }
 
@@ -188,6 +189,7 @@ model InventoryLog {
   created_at         DateTime @default(now())
 
   variant ProductVariant @relation(fields: [product_variant_id], references: [id], onDelete: Cascade)
+  user User @relation(fields: [created_by], references: [id])
 
   @@map("inventory_log")
 }

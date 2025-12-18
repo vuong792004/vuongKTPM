@@ -19,6 +19,15 @@ import CartPage from './pages/cart.jsx';
 import CheckoutPage from './pages/checkout.jsx';
 import OrdersPage from './pages/order.jsx';
 import ProfilePage from './pages/profile.jsx';
+import SupportPage from './pages/support.jsx';
+import AdminRoute from './admin/routes/AdminRoute.jsx';
+import AdminLayout from './admin/AdminLayout.jsx';
+import Dashboard from './admin/pages/Dashboard.jsx';
+import ProductManagement from './admin/pages/ProductManagement.jsx';
+import CategoryManagement from './admin/pages/CategoryManagement.jsx';
+import InventoryManagement from './admin/pages/InventoryManagement.jsx';
+import OrderManagement from './admin/pages/OrderManagement.jsx';
+import UserManagement from './admin/pages/UserManagement.jsx';
 
 
 const router = createBrowserRouter([
@@ -61,6 +70,7 @@ const router = createBrowserRouter([
           </PrivateRoute>
         )
       },
+      { path: "/support", element: <SupportPage /> },
     ]
   },
   {
@@ -79,7 +89,22 @@ const router = createBrowserRouter([
       </GuestRoute>
     )
   },
-
+  {
+    path: "/admin",
+    element: (
+      <AdminRoute>
+        <AdminLayout />
+      </AdminRoute>
+    ),
+    children: [
+      { index: true, element: <Dashboard /> },
+      { path: "products", element: <ProductManagement /> },
+      { path: "categories", element: <CategoryManagement /> },
+      { path: "users", element: <UserManagement /> },
+      { path: "orders", element: <OrderManagement /> },
+      { path: "inventory", element: <InventoryManagement /> },
+    ],
+  },
 ]);
 ReactDOM.createRoot(document.getElementById('root')).render(
   <AntdApp>

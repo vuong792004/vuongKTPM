@@ -97,56 +97,56 @@ const deleteAllWishlist = async (req: Request, res: Response) => {
 //------------------------------------REVIEW----------------------------------------------
 
 const postReview = async (req: Request, res: Response) => {
-    try {
-        const userId = req.user.id;
-        const { productId, rating, comment } = req.body;
+  try {
+    const userId = req.user.id;
+    const { productId, rating, comment } = req.body;
 
-        if (!rating || rating < 1 || rating > 5) {
-            return res.status(400).json({ message: "Rating must be 1 to 5" });
-        }
-
-        const reviewData = await prisma.review.create({
-            data: {
-                user_id: userId,
-                product_id: +productId,
-                rating: +rating,
-                comment,
-            },
-            include: {
-                user: { select: { id: true, name: true, avatar: true } }
-            }
-        });
-
-        return res.status(200).json({
-            success: true,
-            message: "Review submitted successfully",
-            reviewData
-        });
-    } catch (error: any) {
-        return res.status(500).json({
-            success: false,
-            error: error.message
-        });
+    if (!rating || rating < 1 || rating > 5) {
+      return res.status(400).json({ message: "Rating must be 1 to 5" });
     }
+
+    const reviewData = await prisma.review.create({
+      data: {
+        user_id: userId,
+        product_id: +productId,
+        rating: +rating,
+        comment,
+      },
+      include: {
+        user: { select: { id: true, name: true, avatar: true } }
+      }
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Review submitted successfully",
+      reviewData
+    });
+  } catch (error: any) {
+    return res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
 };
 
 const getReview = async (req: Request, res: Response) => {
-    try {
-        const id = req.params.id;
-        const data = await handleGetReview(+id)
-        return res.status(200).json({
-            success: true,
-            message: "Lấy đánh giá của sản phẩm thành công",
-            data
-        });
-    } catch (error: any) {
-        return res.status(500).json({
-            success: false,
-            error: error.message
-        });
-    }
+  try {
+    const id = req.params.id;
+    const data = await handleGetReview(+id)
+    return res.status(200).json({
+      success: true,
+      message: "Lấy đánh giá của sản phẩm thành công",
+      data
+    });
+  } catch (error: any) {
+    return res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
 };
 
 export {
-  postUpdateProfile,getWishlist,postWishlist,deleteWishlist,deleteAllWishlist,postReview,getReview
+  postUpdateProfile, getWishlist, postWishlist, deleteWishlist, deleteAllWishlist, postReview, getReview
 }

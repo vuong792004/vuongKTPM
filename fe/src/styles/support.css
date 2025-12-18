@@ -1,0 +1,150 @@
+.support-page {
+    max-width: 1100px;
+    margin: 40px auto 80px;
+    padding: 0 20px;
+}
+
+.support-hero {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    background: linear-gradient(135deg, #f9f9f9, #ffffff);
+    padding: 28px;
+    border-radius: 26px;
+    box-shadow: 24px 24px 60px #d9d9d9,
+        -24px -24px 60px #ffffff;
+    margin-bottom: 32px;
+}
+
+.support-hero h1 {
+    font-size: 32px;
+    margin-bottom: 8px;
+}
+
+.support-hero p {
+    color: #555;
+}
+
+.support-cta {
+    background: #111;
+    color: #fff;
+    padding: 20px 24px;
+    border-radius: 20px;
+    text-align: right;
+}
+
+.support-cta strong {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 14px;
+    letter-spacing: 1px;
+}
+
+.support-cta span {
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.support-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+    gap: 24px;
+}
+
+.support-form,
+.support-card {
+    background: #fff;
+    border-radius: 24px;
+    padding: 24px;
+    box-shadow: 24px 24px 60px #d9d9d9,
+        -24px -24px 60px #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.support-form label {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 16px;
+    color: #555;
+}
+
+.support-form input,
+.support-form textarea {
+    padding: 12px 16px;
+    border-radius: 14px;
+    border: 1px solid #dcdcdc;
+    background: #fafafa;
+    font-size: 15px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.support-form input:focus,
+.support-form textarea:focus {
+    outline: none;
+    border-color: #111;
+    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.08);
+    background: #fff;
+}
+
+.support-submit {
+    width: 100%;
+    padding: 14px 18px;
+    border-radius: 18px;
+    border: none;
+    background: #111;
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.support-card ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.support-card li {
+    background: #f4f4f4;
+    border-radius: 16px;
+    padding: 16px;
+}
+
+.support-card li strong {
+    display: block;
+    margin-bottom: 6px;
+}
+
+.support-card li p {
+    color: #555;
+}
+
+.support-visit {
+    margin-top: 16px;
+    padding: 12px 20px;
+    border-radius: 18px;
+    border: none;
+    background: #111;
+    color: #fff;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+@media (max-width: 960px) {
+    .support-hero {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .support-cta {
+        text-align: center;
+    }
+
+    .support-grid {
+        grid-template-columns: 1fr;
+    }
+}

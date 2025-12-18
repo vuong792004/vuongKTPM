@@ -1,0 +1,92 @@
+.admin-layout {
+    min-height: 100vh;
+}
+
+.admin-sider {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow: auto;
+}
+
+.admin-logo {
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #767676;
+}
+
+.admin-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.admin-header__title {
+    margin: 0 !important;
+}
+
+.admin-content {
+    margin: 24px;
+    padding: 24px;
+    background: #fff;
+    min-height: calc(100vh - 112px);
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+    border-radius: 16px;
+}
+
+@media (max-width: 768px) {
+    .admin-content {
+        margin: 16px;
+        padding: 16px;
+    }
+}
+
+/* Sider (menu bên trái) */
+.admin-sider {
+    background: #ffffff !important;
+    border-right: 1px solid #e0e0e0;
+}
+
+.admin-header {
+    background: #ffffff !important;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 24px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+
+.admin-header__title {
+    color: #5d5d5d !important;
+    margin: 0;
+}
+
+/* Menu items đổi chữ và icon */
+.admin-sider .ant-menu {
+    background: #ffffff !important;
+}
+
+.admin-sider .ant-menu-item {
+    color: #333 !important;
+}
+
+.admin-sider .ant-menu-item-selected {
+    background-color: #1677ff !important;
+    color: #fff !important;
+    border-radius: 8px;
+}
+
+.admin-sider .ant-menu-item-selected .anticon {
+    color: #fff !important;
+}
+
+.admin-sider .ant-menu-item:hover {
+    background-color: #e6f4ff !important;
+    color: #1677ff !important;
+}

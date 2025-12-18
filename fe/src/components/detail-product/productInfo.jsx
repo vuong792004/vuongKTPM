@@ -1,7 +1,7 @@
 import { useContext, useState, useEffect, useMemo } from "react";
 import './productInfor.css';
 import { Divider, message } from "antd";
-import { addToCartFromDetail } from "../../services/api.service";
+import { addToCartFromDetail, addToWishList } from "../../services/api.service";
 import { MinusOutlined, PlusOutlined } from "@ant-design/icons";
 import { AuthContext } from "../context/auth.context";
 
@@ -33,7 +33,7 @@ const ProductInfor = ({ productInfo, reviews = [] }) => {
                 v.storage === (selectedStorage || storages[0])
         );
     }, [productInfo, selectedColor, selectedStorage, colors, storages]);
-
+    console.log(selectedVariant)
     useEffect(() => {
         if (colors.length > 0) {
             setSelectedColor(colors[0]);
@@ -69,6 +69,18 @@ const ProductInfor = ({ productInfo, reviews = [] }) => {
         }
     };
 
+    const handleAddWishlist = async (productId) => {
+        try {
+            const res = await addToWishList(productId);
+            const { status, message: msg } = res.data;
+
+            if (status === "success") message.success(msg);
+            else if (status === "warning") message.warning(msg);
+            else message.error(msg || "Có lỗi xảy ra");
+        } catch {
+            message.error("Please login to add product to wishlist");
+        }
+    };
 
     // hàm tính trung bình sao
     const avgRating = useMemo(() => {
@@ -180,7 +192,11 @@ const ProductInfor = ({ productInfo, reviews = [] }) => {
                     >
                         {isOutOfStock ? "Unavailable" : "Add to Cart"}
                     </button>
-
+                    <button className="pi-add-wishlist-btn"
+                        onClick={() => handleAddWishlist(selectedVariant.product_id)}
+                    >
+                        Add to Wishlist
+                    </button>
                 </div>
             </div>
             <Divider />

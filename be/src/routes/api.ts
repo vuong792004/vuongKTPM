@@ -30,7 +30,6 @@ const api = (app: Express) => {
     router.post("/place-order", verifyToken, postPlaceOrder); // thực hiện đặt hàng
 
     //order
-    //order
     router.get("/order-history", verifyToken, getOrderHistory);
     router.put("/cancel-order/:orderId", verifyToken, putCancelOrder);
 
