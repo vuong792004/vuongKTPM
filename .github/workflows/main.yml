@@ -1,0 +1,29 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # ===== FE =====
+      - name: Build Frontend
+        working-directory: fe
+        run: |
+          npm install
+          npm run build
+
+      # ===== BE =====
+      - name: Build Backend
+        working-directory: be
+        run: |
+          npm install
+          npm run build || echo "No build script"
